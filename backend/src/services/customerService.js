@@ -133,6 +133,13 @@ function createCustomerService({ customerRepository, ledgerRepository, invoiceRe
               'CUSTOMER_HAS_LEDGER_HISTORY',
             );
           }
+          if (await transaction.hasInvoices()) {
+            throw new ApiError(
+              409,
+              'Customer cannot be deleted because invoice history exists.',
+              'CUSTOMER_HAS_INVOICE_HISTORY',
+            );
+          }
           const deleted = await transaction.deleteCustomer();
           if (!deleted) throw new ApiError(404, 'Customer not found.', 'CUSTOMER_NOT_FOUND');
           return { message: 'Customer deleted successfully.' };

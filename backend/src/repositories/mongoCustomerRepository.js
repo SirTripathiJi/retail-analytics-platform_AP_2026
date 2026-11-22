@@ -9,13 +9,7 @@ function escapeRegex(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-/**
- * Create a repository from an injected business-scoped MongoDB Db.
- * TODO: The tenant integration owner must inject the correct business Db and
- * create a unique index on { businessId, normalizedName, phone } to protect the
- * duplicate-candidate rule from concurrent writes. Phone alone is not unique.
- * @param {import('mongodb').Db} database
- */
+/** Create a repository from the authenticated request's tenant-scoped Db. */
 function createMongoCustomerRepository(database) {
   if (!database || typeof database.collection !== 'function') {
     throw new TypeError('A MongoDB database handle is required.');

@@ -11,11 +11,8 @@ function toEntry(document) {
 }
 
 /**
- * Ledger repository for an injected business Db. No client is created here.
- * TODO: The tenant integration owner must inject a replica-set Db (whose
- * official-driver Db.client is available) so ledger writes and safe customer
- * deletion can use MongoDB transactions. Every query includes businessId.
- * @param {import('mongodb').Db} database
+ * Ledger repository for an injected business Db. All records are scoped by
+ * businessId, and balance-changing operations serialize on the customer row.
  */
 function createMongoLedgerRepository(database) {
   if (!database || typeof database.collection !== 'function') {
@@ -23,6 +20,7 @@ function createMongoLedgerRepository(database) {
   }
   const ledger = database.collection('customerLedger');
   const customers = database.collection('customers');
+  const invoices = database.collection('invoices');
 
   async function withCustomerTransaction({ customerId, businessId }, operation) {
     if (!database.client || typeof database.client.startSession !== 'function') {
@@ -49,6 +47,7 @@ function createMongoLedgerRepository(database) {
           listEntries: async () => (await ledger.find(filter, { session })
             .sort({ createdAt: 1, _id: 1 }).toArray()).map(toEntry),
           hasEntries: async () => Boolean(await ledger.findOne(filter, { session })),
+          hasInvoices: async () => Boolean(await invoices.findOne({ businessId, customerId: id }, { session })),
           createEntry: async (entry) => {
             const document = { ...entry, customerId: id, businessId };
             const inserted = await ledger.insertOne(document, { session });
@@ -62,7 +61,8 @@ function createMongoLedgerRepository(database) {
       });
       return result;
     } catch (error) {
-      if (error?.code === 20 || error?.codeName === 'IllegalOperation') {
+      if (error?.code === 20 || error?.code === 251 || error?.codeName === 'IllegalOperation'
+        || /transaction numbers are only allowed|transactions are not supported|replica set|mongos/i.test(error?.message || '')) {
         throw new ApiError(503, 'The database does not support required ledger transactions.', 'LEDGER_TRANSACTION_UNAVAILABLE');
       }
       throw error;

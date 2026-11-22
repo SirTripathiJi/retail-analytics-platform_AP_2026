@@ -51,7 +51,6 @@ function createKhataService({ customerRepository, ledgerRepository, now = () => 
   async function record(body, customerIdInput, businessIdInput, type) {
     const businessId = requireBusinessId(businessIdInput);
     const customerId = validateObjectId(customerIdInput, 'customer ID');
-    await requireCustomer(customerId, businessId);
     const input = type === 'CREDIT' ? validateCredit(body) : validatePayment(body);
 
     return ledgerRepository.withCustomerTransaction(
