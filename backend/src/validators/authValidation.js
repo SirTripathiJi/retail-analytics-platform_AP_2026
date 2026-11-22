@@ -51,7 +51,9 @@ function validateLogin(body) {
   if (typeof body.password !== 'string' || !body.password) {
     throw new ApiError(400, 'Password is required.', 'VALIDATION_ERROR');
   }
-  return { email, password: body.password };
+  const businessId = typeof body.businessId === 'string' && body.businessId.trim()
+    ? body.businessId.trim() : undefined;
+  return { email, password: body.password, businessId };
 }
 
 module.exports = { validateLogin, validateRegistration };

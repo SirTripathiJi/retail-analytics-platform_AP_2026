@@ -1,7 +1,8 @@
 require('dotenv').config();
 
-const app = require('./app');
+const { createApp } = require('./app');
 const { closeDatabaseConnection, connectCentralDatabase } = require('./config/database');
+const { createMongoUserRepository } = require('./repositories/mongoUserRepository');
 
 const port = Number(process.env.PORT) || 3001;
 let server;
@@ -9,6 +10,9 @@ let shuttingDown = false;
 
 async function startServer() {
   const database = await connectCentralDatabase();
+  const app = createApp({
+    ...(database.connected ? { userRepository: createMongoUserRepository(database.database) } : {}),
+  });
   server = app.listen(port, () => {
     console.log(`अर्थ SAATHI API listening on port ${port}.`);
     console.log(database.connected
