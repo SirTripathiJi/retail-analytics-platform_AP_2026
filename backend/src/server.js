@@ -1,16 +1,19 @@
 require('dotenv').config();
 
 const app = require('./app');
-const { closeDatabaseConnection } = require('./config/database');
+const { closeDatabaseConnection, connectCentralDatabase } = require('./config/database');
 
 const port = Number(process.env.PORT) || 3001;
 let server;
 let shuttingDown = false;
 
-function startServer() {
+async function startServer() {
+  const database = await connectCentralDatabase();
   server = app.listen(port, () => {
     console.log(`अर्थ SAATHI API listening on port ${port}.`);
-    console.log('MongoDB integration is pending; no database connection was opened.');
+    console.log(database.connected
+      ? 'Central MongoDB connection is ready.'
+      : 'Central MongoDB is not configured; database-backed operations will be unavailable.');
   });
 }
 
@@ -36,4 +39,7 @@ async function shutdown(signal) {
 process.on('SIGINT', () => shutdown('SIGINT'));
 process.on('SIGTERM', () => shutdown('SIGTERM'));
 
-startServer();
+startServer().catch((error) => {
+  console.error(error.message || 'Central MongoDB initialization failed.');
+  process.exit(1);
+});
