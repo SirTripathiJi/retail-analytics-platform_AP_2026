@@ -116,6 +116,12 @@ function createPaymentService({ invoiceRepository, customerRepository, now = () 
         createdAt,
       });
       return safePayment(payment);
+    }).catch(async (error) => {
+      if (input.idempotencyKey && error?.code === 'IDEMPOTENCY_KEY_CONFLICT') {
+        const prior = await invoiceRepository.findPaymentByIdempotencyKey(businessId, input.idempotencyKey);
+        if (prior) return safePayment(prior);
+      }
+      throw error;
     });
   }
 

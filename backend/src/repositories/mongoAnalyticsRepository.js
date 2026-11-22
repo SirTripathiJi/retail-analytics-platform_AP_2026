@@ -1,4 +1,11 @@
 const { calculateSummary } = require('../services/khataService');
+const ApiError = require('../errors/ApiError');
+
+function assertBusinessId(businessId) {
+  if (typeof businessId !== 'string' || !businessId.trim()) {
+    throw new ApiError(401, 'Authenticated business context is missing.', 'BUSINESS_CONTEXT_REQUIRED');
+  }
+}
 
 function paiseProductValue(field) {
   return { $round: [{ $multiply: [{ $ifNull: [`$${field}`, 0] }, { $ifNull: ['$stockQuantity', 0] }, 100] }, 0] };
@@ -23,6 +30,7 @@ function createMongoAnalyticsRepository(database) {
 
   return {
     async overview({ businessId, now, today, week, month, range, expiringFrom, expiringTo }) {
+      assertBusinessId(businessId);
       const starts = [today.from, week.from, month.from, range?.from].filter(Boolean);
       const from = new Date(Math.min(...starts.map((date) => date.getTime())));
       const ends = [now, range?.to].filter(Boolean);
@@ -102,6 +110,7 @@ function createMongoAnalyticsRepository(database) {
     },
 
     async sales({ businessId, from, to, period, timeZone }) {
+      assertBusinessId(businessId);
       const unit = { daily: 'day', weekly: 'week', monthly: 'month', yearly: 'year' }[period];
       const dateTrunc = { $dateTrunc: { date: '$createdAt', unit, timezone: timeZone, ...(period === 'weekly' ? { startOfWeek: 'monday' } : {}) } };
       return invoices.aggregate([
@@ -117,6 +126,7 @@ function createMongoAnalyticsRepository(database) {
     },
 
     async categoryPerformance({ businessId, from, to }) {
+      assertBusinessId(businessId);
       const range = from || to ? { createdAt: { ...(from ? { $gte: from } : {}), ...(to ? { $lte: to } : {}) } } : {};
       return invoices.aggregate([
         { $match: { businessId, status: { $ne: 'CANCELLED' }, ...range } },
@@ -136,6 +146,7 @@ function createMongoAnalyticsRepository(database) {
     },
 
     async productPerformance({ businessId, from, to, sortBy = 'totalRevenue', order = 'desc', skip = 0, limit = 20 }) {
+      assertBusinessId(businessId);
       const dateExpressions = [];
       if (from) dateExpressions.push({ $gte: ['$createdAt', from] });
       if (to) dateExpressions.push({ $lte: ['$createdAt', to] });
@@ -170,6 +181,7 @@ function createMongoAnalyticsRepository(database) {
     },
 
     async inventory({ businessId, expiredBefore, expiringFrom, expiringTo }) {
+      assertBusinessId(businessId);
       const summary = await products.aggregate([
         { $match: { businessId } },
         { $group: { _id: null, totalProducts: { $sum: 1 }, totalStockQuantity: { $sum: { $ifNull: ['$stockQuantity', 0] } },

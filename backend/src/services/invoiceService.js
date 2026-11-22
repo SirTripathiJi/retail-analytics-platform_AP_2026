@@ -133,6 +133,12 @@ function createInvoiceService({ invoiceRepository, productRepository, customerRe
           });
         }
         return publicInvoice(saved);
+      }).catch(async (error) => {
+        if (input.idempotencyKey && error?.code === 'IDEMPOTENCY_KEY_CONFLICT') {
+          const prior = await invoiceRepository.findInvoiceByIdempotencyKey(businessId, input.idempotencyKey);
+          if (prior) return publicInvoice(prior);
+        }
+        throw error;
       });
     },
 

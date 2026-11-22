@@ -7,10 +7,9 @@ function toPublic(document) {
 }
 
 /**
- * Invoice/stock/ledger adapter for an injected tenant Db. The tenant selector
- * must supply a replica-set Db; no connection is created here.
- * TODO: tenant integration must inject the selected business Db and provision
- * the indexes described in README.md before enabling these APIs.
+ * Invoice, payment, stock, and ledger adapter for an injected tenant Db.
+ * Multi-record writes use replica-set transactions; operational queries are
+ * scoped by the authenticated business identifier.
  */
 function createMongoInvoiceRepository(database) {
   if (!database || typeof database.collection !== 'function') throw new TypeError('A MongoDB database handle is required.');
@@ -25,6 +24,11 @@ function createMongoInvoiceRepository(database) {
   function unavailableTransaction(error) {
     return error?.code === 20 || error?.codeName === 'IllegalOperation'
       || error?.codeName === 'TransactionNumbersAreOnlyAllowedOn a ReplicaSetMemberOr mongos';
+  }
+  function isIdempotencyDuplicate(error) {
+    return error?.code === 11000
+      && (Object.hasOwn(error.keyPattern || {}, 'idempotencyKey')
+        || /(?:invoices|payments)_business_idempotency_unique/.test(error.message || ''));
   }
   async function withTransaction(operation) {
     if (!database.client || typeof database.client.startSession !== 'function') {
@@ -131,6 +135,9 @@ function createMongoInvoiceRepository(database) {
       if (unavailableTransaction(error)) {
         throw new ApiError(503, 'The database does not support required invoice transactions.', 'INVOICE_TRANSACTION_UNAVAILABLE');
       }
+      if (isIdempotencyDuplicate(error)) {
+        throw new ApiError(409, 'This idempotency key has already been processed.', 'IDEMPOTENCY_KEY_CONFLICT');
+      }
       if (error?.code === 11000) throw new ApiError(409, 'A record with this business-scoped identifier already exists.', 'DUPLICATE_RECORD');
       throw error;
     } finally {
@@ -228,6 +235,14 @@ function createMongoInvoiceRepository(database) {
 
   return {
     withTransaction,
+    async findInvoiceByIdempotencyKey(businessId, key) {
+      if (!key) return null;
+      return toPublic(await invoices.findOne({ businessId, idempotencyKey: key }));
+    },
+    async findPaymentByIdempotencyKey(businessId, key) {
+      if (!key) return null;
+      return toPayment(await payments.findOne({ businessId, idempotencyKey: key }));
+    },
     list,
     listPayments,
     async findPayment(id, businessId) { return toPayment(await payments.findOne({ _id: new ObjectId(id), businessId })); },
