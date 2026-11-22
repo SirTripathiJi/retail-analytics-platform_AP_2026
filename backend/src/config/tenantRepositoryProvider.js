@@ -7,6 +7,7 @@ const { createMongoLedgerRepository } = require('../repositories/mongoLedgerRepo
 const { createMongoInvoiceRepository } = require('../repositories/mongoInvoiceRepository');
 const { createMongoAnalyticsRepository } = require('../repositories/mongoAnalyticsRepository');
 const { createMongoBusinessRepository } = require('../repositories/mongoBusinessRepository');
+const { provisionTenantDatabase } = require('./provisionTenantDatabase');
 const ApiError = require('../errors/ApiError');
 
 const tenantRequestContext = new AsyncLocalStorage();
@@ -117,6 +118,14 @@ function createTenantRepositoryProvider({
           await client.close().catch(() => {});
           throw new ApiError(503, 'The business database is unavailable.', 'TENANT_DATABASE_UNAVAILABLE');
         }
+      }
+
+      try {
+        await provisionTenantDatabase(database);
+      } catch (error) {
+        if (mapping.secretRef !== 'CENTRAL') await client.close().catch(() => {});
+        if (error instanceof ApiError) throw error;
+        throw new ApiError(503, 'The business database could not be provisioned.', 'TENANT_PROVISIONING_FAILED');
       }
 
       const entry = {
