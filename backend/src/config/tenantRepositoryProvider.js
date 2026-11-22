@@ -47,7 +47,8 @@ function createTenantRepositoryProvider({
 
   function getUri(secretRef) {
     if (secretRef === 'CENTRAL') return centralUri;
-    const match = typeof secretRef === 'string' && secretRef.match(/^ENV:([A-Z][A-Z0-9_]*)$/);
+    const match = typeof secretRef === 'string'
+      && secretRef.match(/^ENV:(TENANT_MONGODB_URI__[A-Z0-9_]+)$/);
     if (match) return process.env[match[1]];
     return undefined;
   }

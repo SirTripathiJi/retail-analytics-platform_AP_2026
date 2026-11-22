@@ -41,6 +41,9 @@ function createBusinessService({ businessRepository, now = () => new Date() }) {
     },
     async reset(body, businessValue, actorId) {
       const businessId = requireBusinessId(businessValue);
+      if (typeof actorId !== 'string' || !actorId.trim()) {
+        throw new ApiError(401, 'Authenticated reset actor is missing.', 'AUTHENTICATION_REQUIRED');
+      }
       const { counts, snapshotFingerprint } = validateResetRequest(body);
       const result = await businessRepository.resetBusinessData({ businessId, expectedCounts: counts, expectedFingerprint: snapshotFingerprint, actorId });
       return { success: true, businessId, resetAt: result.resetAt, deletedCounts: result.deletedCounts,
