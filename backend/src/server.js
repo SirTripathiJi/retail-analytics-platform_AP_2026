@@ -2,16 +2,22 @@ require('dotenv').config();
 
 const { createApp } = require('./app');
 const { closeDatabaseConnection, connectCentralDatabase } = require('./config/database');
+const { createTenantRepositoryProvider } = require('./config/tenantRepositoryProvider');
 const { createMongoUserRepository } = require('./repositories/mongoUserRepository');
 
 const port = Number(process.env.PORT) || 3001;
 let server;
 let shuttingDown = false;
+let tenantRepositoryProvider;
 
 async function startServer() {
   const database = await connectCentralDatabase();
+  tenantRepositoryProvider = database.connected
+    ? createTenantRepositoryProvider({ centralDatabase: database.database })
+    : null;
   const app = createApp({
     ...(database.connected ? { userRepository: createMongoUserRepository(database.database) } : {}),
+    ...(tenantRepositoryProvider ? { tenantRepositoryProvider } : {}),
   });
   server = app.listen(port, () => {
     console.log(`अर्थ SAATHI API listening on port ${port}.`);
@@ -32,6 +38,7 @@ async function shutdown(signal) {
         server.close((error) => (error ? reject(error) : resolve()));
       });
     }
+    if (tenantRepositoryProvider) await tenantRepositoryProvider.close();
     await closeDatabaseConnection();
     process.exit(0);
   } catch (error) {

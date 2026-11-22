@@ -24,6 +24,9 @@ const { errorHandler, notFoundHandler } = require('./middleware/errorHandler');
 const unavailableAnalyticsRepository = require('./repositories/unavailableAnalyticsRepository');
 const unavailableBusinessRepository = require('./repositories/unavailableBusinessRepository');
 const { createBusinessRoutes } = require('./routes/businessRoutes');
+const { createRequireAuthentication } = require('./middleware/requireAuthentication');
+const { createResolveTenantContext } = require('./middleware/resolveTenantContext');
+const { createTenantRepositoryProxy } = require('./config/tenantRepositoryProvider');
 
 function createApp({
   userRepository = unavailableUserRepository,
@@ -38,11 +41,21 @@ function createApp({
   businessDataRepository = null,
   // TODO: Inject analytics repository backed by the authenticated tenant Db.
   analyticsDataRepository = unavailableAnalyticsRepository,
+  tenantRepositoryProvider = null,
   businessTimeZone = process.env.BUSINESS_TIME_ZONE || 'UTC',
   jwtSecret = process.env.JWT_SECRET,
   jwtExpiresIn = process.env.JWT_EXPIRES_IN || '1h',
 } = {}) {
   const app = express();
+  if (tenantRepositoryProvider) {
+    inventoryProductRepository = createTenantRepositoryProxy('product');
+    inventoryCategoryRepository = createTenantRepositoryProxy('category');
+    customerDataRepository = createTenantRepositoryProxy('customer');
+    customerLedgerRepository = createTenantRepositoryProxy('ledger');
+    invoiceDataRepository = createTenantRepositoryProxy('invoice');
+    analyticsDataRepository = createTenantRepositoryProxy('analytics');
+    businessDataRepository = createTenantRepositoryProxy('business');
+  }
   const businessRepository = businessDataRepository || unavailableBusinessRepository;
   const timeZoneResolver = businessDataRepository
     ? async (businessId) => (await businessDataRepository.getSettings(businessId)).timezone
@@ -67,6 +80,15 @@ function createApp({
     message: { error: 'Too many authentication attempts. Please try again later.', code: 'RATE_LIMITED' },
   });
   app.use('/api', healthRoutes);
+  if (tenantRepositoryProvider) {
+    const tenantAuth = createRequireAuthentication({ jwtSecret });
+    const resolveTenantContext = createResolveTenantContext(tenantRepositoryProvider);
+    app.use([
+      '/api/products', '/api/categories', '/api/customers', '/api/khata',
+      '/api/invoices', '/api/payments', '/api/transactions', '/api/dashboard',
+      '/api/analytics', '/api/business',
+    ], tenantAuth, resolveTenantContext);
+  }
   app.use('/api/auth', authLimiter, createAuthRoutes({ userRepository, jwtSecret, jwtExpiresIn }));
   app.use('/api/products', createProductRoutes({
     productRepository: inventoryProductRepository,
