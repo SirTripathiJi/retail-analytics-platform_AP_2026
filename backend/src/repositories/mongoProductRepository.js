@@ -1,4 +1,5 @@
 const { ObjectId } = require('mongodb');
+const ApiError = require('../errors/ApiError');
 
 function toProduct(document) {
   if (!document) return null;
@@ -29,9 +30,8 @@ function buildFilter({ businessId, search, categoryId, lowStock, expired, expiry
 }
 
 /**
- * TODO: Tenant selection must inject the shopkeeper's Db before constructing
- * this repository. This implementation opens no connections and always scopes
- * reads/writes by authenticated businessId as defense in depth.
+ * Tenant selection injects the shopkeeper's Db; writes remain scoped by the
+ * authenticated businessId as defense in depth.
  * @param {import('mongodb').Db} database
  */
 function createMongoProductRepository(database) {
@@ -39,6 +39,41 @@ function createMongoProductRepository(database) {
     throw new TypeError('A MongoDB database handle is required.');
   }
   const products = database.collection('products');
+  const categories = database.collection('categories');
+
+  async function withTransaction(operation) {
+    if (!database.client || typeof database.client.startSession !== 'function') {
+      throw new ApiError(503, 'Product category consistency requires MongoDB transactions.', 'INVENTORY_TRANSACTION_UNAVAILABLE');
+    }
+    const session = database.client.startSession();
+    let result;
+    try {
+      await session.withTransaction(async () => {
+        result = await operation(session);
+      });
+      return result;
+    } catch (error) {
+      if (error?.code === 20 || error?.codeName === 'IllegalOperation'
+        || /transaction numbers are only allowed|transactions are not supported|replica set|mongos/i.test(error?.message || '')) {
+        throw new ApiError(503, 'Product category consistency requires a replica set or sharded cluster.', 'INVENTORY_TRANSACTION_UNAVAILABLE');
+      }
+      throw error;
+    } finally {
+      await session.endSession();
+    }
+  }
+
+  async function lockCategory(categoryId, businessId, session) {
+    if (!categoryId) return;
+    const result = await categories.updateOne(
+      { _id: new ObjectId(categoryId), businessId },
+      { $inc: { referenceRevision: 1 } },
+      { session },
+    );
+    if (!result.matchedCount) {
+      throw new ApiError(400, 'categoryId does not identify a category in this business.', 'INVALID_CATEGORY');
+    }
+  }
 
   async function findPage(filter, { skip, limit }) {
     const [documents, total] = await Promise.all([
@@ -54,8 +89,11 @@ function createMongoProductRepository(database) {
         ...product,
         categoryId: product.categoryId ? new ObjectId(product.categoryId) : null,
       };
-      const result = await products.insertOne(document);
-      return toProduct({ ...document, _id: result.insertedId });
+      return withTransaction(async (session) => {
+        await lockCategory(document.categoryId, document.businessId, session);
+        const result = await products.insertOne(document, { session });
+        return toProduct({ ...document, _id: result.insertedId });
+      });
     },
 
     async list(options) {
@@ -69,11 +107,15 @@ function createMongoProductRepository(database) {
     async updateById(id, businessId, update) {
       const fields = { ...update };
       if (fields.categoryId) fields.categoryId = new ObjectId(fields.categoryId);
-      await products.updateOne(
-        { _id: new ObjectId(id), businessId },
-        { $set: fields },
-      );
-      return toProduct(await products.findOne({ _id: new ObjectId(id), businessId }));
+      return withTransaction(async (session) => {
+        if (Object.hasOwn(fields, 'categoryId')) await lockCategory(fields.categoryId, businessId, session);
+        await products.updateOne(
+          { _id: new ObjectId(id), businessId },
+          { $set: fields },
+          { session },
+        );
+        return toProduct(await products.findOne({ _id: new ObjectId(id), businessId }, { session }));
+      });
     },
 
     async deleteById(id, businessId) {

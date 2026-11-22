@@ -1,4 +1,5 @@
 const { ObjectId } = require('mongodb');
+const ApiError = require('../errors/ApiError');
 
 function toCategory(document) {
   if (!document) return null;
@@ -16,6 +17,29 @@ function createMongoCategoryRepository(database) {
     throw new TypeError('A MongoDB database handle is required.');
   }
   const categories = database.collection('categories');
+  const products = database.collection('products');
+
+  async function withTransaction(operation) {
+    if (!database.client || typeof database.client.startSession !== 'function') {
+      throw new ApiError(503, 'Safe category deletion requires MongoDB transactions.', 'INVENTORY_TRANSACTION_UNAVAILABLE');
+    }
+    const session = database.client.startSession();
+    let result;
+    try {
+      await session.withTransaction(async () => {
+        result = await operation(session);
+      });
+      return result;
+    } catch (error) {
+      if (error?.code === 20 || error?.codeName === 'IllegalOperation'
+        || /transaction numbers are only allowed|transactions are not supported|replica set|mongos/i.test(error?.message || '')) {
+        throw new ApiError(503, 'Safe category deletion requires a replica set or sharded cluster.', 'INVENTORY_TRANSACTION_UNAVAILABLE');
+      }
+      throw error;
+    } finally {
+      await session.endSession();
+    }
+  }
 
   return {
     async create(category) {
@@ -51,10 +75,24 @@ function createMongoCategoryRepository(database) {
     },
 
     async deleteById(id, businessId) {
-      // TODO: Use a transaction or equivalent tenant-store constraint to close
-      // the race between the service's reference count and this delete.
-      const result = await categories.deleteOne({ _id: new ObjectId(id), businessId });
-      return result.deletedCount === 1;
+      return withTransaction(async (session) => {
+        const categoryId = new ObjectId(id);
+        // Product creation and reassignment update the same category marker.
+        // This write makes concurrent reference checks conflict and retry.
+        const locked = await categories.updateOne(
+          { _id: categoryId, businessId },
+          { $inc: { referenceRevision: 1 } },
+          { session },
+        );
+        if (!locked.matchedCount) return false;
+
+        const references = await products.countDocuments({ categoryId, businessId }, { session });
+        if (references) {
+          throw new ApiError(409, 'Category cannot be deleted while products reference it.', 'CATEGORY_IN_USE');
+        }
+        const result = await categories.deleteOne({ _id: categoryId, businessId }, { session });
+        return result.deletedCount === 1;
+      });
     },
   };
 }
