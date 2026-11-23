@@ -85,10 +85,10 @@ function Hero() {
       <Button onClick={() => navigate('/signup')}>Get Started</Button>
     </div>
     <div className="hero-media">
-      <ArthSaathiIllustration scene="shop" className="hero-artwork" />
+      <img src="/images/hero-store.jpg" alt="Grocery store aisles stocked with everyday products" className="hero-artwork" />
       <button className="play-button" aria-label="Open video preview" onClick={() => setPreview(true)}><Play size={24} fill="none" /></button>
     </div>
-    {preview && <div className="modal-backdrop" role="presentation" onClick={() => setPreview(false)}><div className="preview-modal" role="dialog" aria-modal="true" aria-labelledby="preview-title" onClick={e => e.stopPropagation()}><button className="modal-close" aria-label="Close preview" onClick={() => setPreview(false)}><X /></button><ArthSaathiIllustration scene="shop" className="preview-artwork" /><div><span className="eyebrow">ARTHSAATHI</span><h2 id="preview-title">Apne Business Ka Apna Saathi.</h2><p>Manage your daily shop records with greater clarity.</p></div></div></div>}
+    {preview && <div className="modal-backdrop" role="presentation" onClick={() => setPreview(false)}><div className="preview-modal" role="dialog" aria-modal="true" aria-labelledby="preview-title" onClick={e => e.stopPropagation()}><button className="modal-close" aria-label="Close preview" onClick={() => setPreview(false)}><X /></button><img src="/images/hero-store.jpg" alt="Grocery store aisles stocked with everyday products" className="preview-artwork" /><div><span className="eyebrow">ARTHSAATHI</span><h2 id="preview-title">Apne Business Ka Apna Saathi.</h2><p>Manage your daily shop records with greater clarity.</p></div></div></div>}
   </section>
 }
 
@@ -104,23 +104,23 @@ function Benefits() {
   return <section className="benefits section-pad" id="features">
     <SectionHead label="Benefits" title="Less Hisaab-Kitaab. More Business Growth." description="Everything you need to manage your daily business, stay on top of your money, and keep your shop moving forward." />
     <div className="feature-pair">
-      <article className="feature-block"><h3>Stock That Stays in Control</h3><p>Know what's selling, what's running low, and what needs restocking before your customers ask.</p><ArthSaathiIllustration scene="stock" className="feature-illustration" /></article>
-      <article className="feature-block"><h3>Billing Without the Hassle</h3><p>Create bills, record sales, and keep your daily transactions organized without the usual confusion.</p><ArthSaathiIllustration scene="billing" className="feature-illustration" /></article>
+      <article className="feature-block"><h3>Stock That Stays in Control</h3><p>Know what's selling, what's running low, and what needs restocking before your customers ask.</p><img src="/images/feature-inventory.jpg" alt="Fresh produce stocked on grocery store shelves" className="feature-illustration" /></article>
+      <article className="feature-block"><h3>Billing Without the Hassle</h3><p>Create bills, record sales, and keep your daily transactions organized without the usual confusion.</p><img src="/images/feature-billing.jpg" alt="Retail checkout with a customer making a payment" className="feature-illustration" /></article>
     </div>
     <div className="mini-grid">{miniFeatures.map(({ scene, title, text }) => <article key={title}><ArthSaathiIllustration scene={scene} className="mini-feature-art" /><h4>{title}</h4><p>{text}</p></article>)}</div>
   </section>
 }
 
 const people = [
-  { name: 'Opening the shop', role: 'A quick stock check', scene: 'stock' },
-  { name: 'The daily udhaar', role: 'A note worth keeping', scene: 'credit' },
-  { name: 'At the counter', role: 'One customer at a time', scene: 'customer' },
-  { name: 'Closing hisaab', role: 'Reviewing the day', scene: 'profit' },
+  { name: 'Opening the shop', role: 'A quick stock check', image: '/images/team.jpg' },
+  { name: 'The daily udhaar', role: 'A note worth keeping', image: '/images/blog1.jpg' },
+  { name: 'At the counter', role: 'One customer at a time', image: '/images/blog2.jpg' },
+  { name: 'Closing hisaab', role: 'Reviewing the day', image: '/images/blog3.jpg' },
 ]
 function Testimonial() {
   return <section className="testimonial section-pad">
     <div className="quote-head"><div><p className="quote-kicker"><Quote size={17} /> Built for the People Who Keep Business Moving.</p><blockquote>Running a shop takes hard work. ArthSaathi is built to help make everyday business management clearer, simpler, and more organized.</blockquote><p className="quote-date">For India's shopkeepers</p></div><div className="brand-story-mark"><ArthSaathiMark decorative /> ArthSaathi</div></div>
-    <div className="people-grid">{people.map(person => <Card className="person-card" key={person.name}><ArthSaathiIllustration scene={person.scene} title={`${person.name}: ${person.role}`} /><div className="person-caption"><div>{person.role}</div><strong>{person.name}</strong><span>ArthSaathi shop stories</span></div></Card>)}</div>
+    <div className="people-grid">{people.map(person => <Card className="person-card" key={person.name}><img src={person.image} alt={person.name} /><div className="person-caption"><div>{person.role}</div><strong>{person.name}</strong><span>ArthSaathi shop stories</span></div></Card>)}</div>
   </section>
 }
 
@@ -131,30 +131,30 @@ const stats = [
   { value: 'Payments', label: 'Keep pending balances visible', link: 'Explore ArthSaathi' },
 ]
 function Stats() {
-  return <section className="stats section-pad"><div className="stats-copy"><h2>Your Business. A Clearer Picture.</h2><p>Keep an eye on your sales, stock, and pending payments. Understand your business better and make decisions with confidence.</p><div className="stats-grid">{stats.map(s => <article key={s.value}><strong>{s.value}</strong><span>{s.label}</span><a href="#contact">{s.link} <ArrowRight size={15} /></a></article>)}</div></div><ArthSaathiIllustration scene="profit" className="stats-image" /></section>
+  return <section className="stats section-pad"><div className="stats-copy"><h2>Your Business. A Clearer Picture.</h2><p>Keep an eye on your sales, stock, and pending payments. Understand your business better and make decisions with confidence.</p><div className="stats-grid">{stats.map(s => <article key={s.value}><strong>{s.value}</strong><span>{s.label}</span><a href="#contact">{s.link} <ArrowRight size={15} /></a></article>)}</div></div><img src="/images/team.jpg" alt="Modern business district representing business growth" className="stats-image" /></section>
 }
 
 const tiers = [
-  { name: 'Starter', icon: Sparkles, annual: 10, description: 'For small shops that want to organize everyday business operations.', features: ['Organize daily business records', 'Manage your inventory', 'Record sales and transactions', 'Keep customer credit records'] },
-  { name: 'Pro', icon: Zap, annual: 24, description: 'For growing shops that need better control over stock, sales, and payments.', features: ['Everything in Starter', 'Sort and search inventory', 'Review sales and recorded profit', 'Track customer balances'], popular: true },
-  { name: 'Enterprise', icon: Layers3, annual: 48, description: 'For larger businesses that need more control over their operations.', features: ['Everything in Pro', 'Print completed invoices', 'Review sales and inventory trends', 'Manage on-device shop records'] },
+  { name: 'Starter', icon: Sparkles, monthly: 12, annual: 22, description: 'For small shops that want to organize everyday business operations.', features: ['Organize daily business records', 'Manage your inventory', 'Record sales and transactions', 'Keep customer credit records'] },
+  { name: 'Pro', icon: Zap, monthly: 29, annual: 54, description: 'For growing shops that need better control over stock, sales, and payments.', features: ['Everything in Starter', 'Sort and search inventory', 'Review sales and recorded profit', 'Track customer balances'], popular: true },
+  { name: 'Enterprise', icon: Layers3, monthly: 59, annual: 110, description: 'For larger businesses that need more control over their operations.', features: ['Everything in Pro', 'Print completed invoices', 'Review sales and inventory trends', 'Manage on-device shop records'] },
 ]
 function Pricing() {
   const [annual, setAnnual] = useState(true)
   const navigate = useNavigate()
   return <section className="pricing section-pad" id="pricing"><SectionHead label="Pricing" title="Simple Plans. Smarter Shop Management." description="Choose a plan that fits your business today, with room to grow as your shop grows." />
-    <div className="billing" role="group" aria-label="Billing period"><button className={annual ? 'selected' : ''} onClick={() => setAnnual(true)} aria-pressed={annual}>Billed Yearly</button><button className={!annual ? 'selected' : ''} onClick={() => setAnnual(false)} aria-pressed={!annual}>Billed Monthly</button></div>
-    <div className="pricing-grid">{tiers.map(tier => {const Icon = tier.icon; return <Card className={`price-card ${tier.popular ? 'popular' : ''}`} key={tier.name}>{tier.popular && <Badge className="popular-badge">Most Popular</Badge>}<div className="plan-icon"><Icon size={18} /></div><h3>{tier.name}</h3><p className="plan-description">{tier.description}</p><div className="price"><strong>{annual ? `$${tier.annual}` : 'Contact us'}</strong><span>{annual ? <>Per month<br />Plus applicable taxes</> : <>Monthly pricing<br />on request</>}</span></div><Button variant={tier.popular ? 'primary' : 'outline'} onClick={() => navigate('/signup')}>Get Started</Button><ul>{tier.features.map(item => <li key={item}><Check size={15} />{item}</li>)}</ul></Card>})}</div>
+    <div className="billing" role="group" aria-label="Billing period"><button className={!annual ? 'selected' : ''} onClick={() => setAnnual(false)} aria-pressed={!annual}>Billed Monthly</button><button className={annual ? 'selected' : ''} onClick={() => setAnnual(true)} aria-pressed={annual}>Billed Yearly</button></div>
+    <div className="pricing-grid">{tiers.map(tier => {const Icon = tier.icon; return <Card className={`price-card ${tier.popular ? 'popular' : ''}`} key={tier.name}>{tier.popular && <Badge className="popular-badge">Most Popular</Badge>}<div className="plan-icon"><Icon size={18} /></div><h3>{tier.name}</h3><p className="plan-description">{tier.description}</p><div className="price"><strong>${annual ? tier.annual : tier.monthly}</strong><span>Per month<br />{annual ? 'Billed yearly' : 'Billed monthly'}<br />Plus applicable taxes</span></div><Button variant={tier.popular ? 'primary' : 'outline'} onClick={() => navigate('/signup')}>Get Started</Button><ul>{tier.features.map(item => <li key={item}><Check size={15} />{item}</li>)}</ul></Card>})}</div>
   </section>
 }
 
 const posts = [
-  { category: 'Profit & Finance', title: 'Sales Are Up. But Is Your Profit?', read: 'Business guide', desc: "Learn why sales alone don't tell the whole story and how tracking product costs helps you understand recorded profit.", author: 'ArthSaathi', date: 'Profit & finance', scene: 'profit' },
-  { category: 'Inventory', title: 'Never Lose Track of Your Stock', read: 'Stock guide', desc: 'Discover practical ways to manage inventory, spot low-stock products, and avoid unnecessary overstocking.', author: 'ArthSaathi', date: 'Inventory guide', scene: 'stock' },
-  { category: 'Customer Payments', title: 'Udhaar, Without the Confusion', read: 'Payment guide', desc: 'Learn how organized credit records and timely payment follow-ups can help you stay on top of customer dues.', author: 'ArthSaathi', date: 'Customer payments', scene: 'credit' },
+  { category: 'Profit & Finance', title: 'Sales Are Up. But Is Your Profit?', read: 'Business guide', desc: "Learn why sales alone don't tell the whole story and how tracking product costs helps you understand recorded profit.", author: 'ArthSaathi', date: 'Profit & finance', image: '/images/blog-profit.jpg' },
+  { category: 'Inventory', title: 'Never Lose Track of Your Stock', read: 'Stock guide', desc: 'Discover practical ways to manage inventory, spot low-stock products, and avoid unnecessary overstocking.', author: 'ArthSaathi', date: 'Inventory guide', image: '/images/blog-inventory.jpg' },
+  { category: 'Customer Payments', title: 'Udhaar, Without the Confusion', read: 'Payment guide', desc: 'Learn how organized credit records and timely payment follow-ups can help you stay on top of customer dues.', author: 'ArthSaathi', date: 'Customer payments', image: '/images/blog-payments.jpg' },
 ]
 function Blog() {
-  return <section className="blog section-pad" id="blog"><div className="blog-head"><div><Eyebrow>Business Guides</Eyebrow><h2>Smart Business Starts with Better Hisaab.</h2><p>Practical tips and useful ideas to help you manage stock, record sales, follow up on payments, and understand product profit.</p></div><a className="see-all" href="#blog">See All <ArrowRight size={15} /></a></div><div className="blog-grid">{posts.map(post => <article className="blog-card" key={post.title}><a className="blog-image" href="#blog" aria-label={`Read ${post.title}`}><ArthSaathiIllustration scene={post.scene} title={`${post.category}: ${post.title}`} /></a><div className="blog-meta"><span>{post.category}</span><small>{post.read}</small></div><h3><a href="#blog">{post.title}</a></h3><p>{post.desc}</p><div className="author"><ArthSaathiMark decorative className="author-mark" /><span>{post.author}<small>{post.date}</small></span></div></article>)}</div></section>
+  return <section className="blog section-pad" id="blog"><div className="blog-head"><div><Eyebrow>Business Guides</Eyebrow><h2>Smart Business Starts with Better Hisaab.</h2><p>Practical tips and useful ideas to help you manage stock, record sales, follow up on payments, and understand product profit.</p></div><a className="see-all" href="#blog">See All <ArrowRight size={15} /></a></div><div className="blog-grid">{posts.map(post => <article className="blog-card" key={post.title}><a className="blog-image" href="#blog" aria-label={`Read ${post.title}`}><img src={post.image} alt={post.category} /></a><div className="blog-meta"><span>{post.category}</span><small>{post.read}</small></div><h3><a href="#blog">{post.title}</a></h3><p>{post.desc}</p><div className="author"><ArthSaathiMark decorative className="author-mark" /><span>{post.author}<small>{post.date}</small></span></div></article>)}</div></section>
 }
 
 const faqs = [
