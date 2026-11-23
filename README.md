@@ -1,411 +1,346 @@
 # अर्थ SAATHI — Retail Analytics & Management Platform
 
-\<p align="center">   \*\*Apne Business Ka Apna Saathi.\*\*
+**Apne Business Ka Apna Saathi.**
 
-A unified retail management platform designed to simplify inventory, billing, customer management, payments, and business analytics for small businesses.
+A unified retail workspace for inventory, billing, customer khata, payments, and business insights.
 
-\</p>
-
----
-
-## About the Project
-
-**अर्थ SAATHI** is a full-stack retail management platform designed to help shopkeepers manage their everyday business operations through a single digital workspace.
-
-Small retail businesses often manage inventory, sales, customer records, billing, and outstanding payments manually. This can lead to inaccurate records, difficulty tracking stock, and limited visibility into business performance.
-
-अर्थ SAATHI aims to solve these challenges by bringing essential retail operations together in one application.
-
-The project consists of a React-based frontend and a Node.js + Express backend, maintained within a single repository. Its planned database architecture uses MongoDB with a Business-Owned Data (BYOD) approach, where each business's operational data is maintained in its own database environment.
-
-## Key Features
-
-### 1. Dashboard & Business Analytics
-
-- Centralized retail dashboard.
-- Sales and profit overview.
-- Daily transaction tracking.
-- Inventory statistics.
-- Product and category performance analytics.
-
-### 2. Inventory Management
-
-- Add, update, and delete products.
-- Organize products into categories.
-- Track available stock quantities.
-- Identify low-stock products.
-- Monitor expired and upcoming expiry products.
-
-### 3. Billing & Invoice Management
-
-- Create customer invoices.
-- Support cash and credit sales.
-- Automatic invoice calculations.
-- Stock deduction after successful sales.
-- Invoice cancellation and reversal handling.
-- Support for custom billing items.
-
-### 4. Customer Management
-
-- Maintain customer records.
-- Track customer purchase history.
-- Manage customer-specific outstanding balances.
-- Maintain a digital Khata ledger.
-
-### 5. Payments & Transactions
-
-- Record customer payments.
-- Track paid, unpaid, and partially paid invoices.
-- Allocate payments against outstanding dues.
-- Maintain transaction history.
-
-### 6. Business Profile & Settings
-
-- Manage business profile information.
-- Configure business preferences.
-- Support business timezone settings.
-- Preview and perform supported business-data reset operations.
-
-### 7. User Authentication
-
-- User registration and login APIs.
-- Password hashing using bcrypt.
-- JWT-based authentication.
-- Optional Supabase authentication support in the frontend.
-- Local demo authentication when Supabase is not configured.
+[GitHub Repository](https://github.com/SirTripathiJi/retail-analytics-platform_AP_2026) · React + Vite · Node.js + Express · MongoDB Node.js Driver
 
 ---
 
-## Technology Stack
+## Overview
 
-| Layer                   | Technologies                     |
-| ----------------------- | -------------------------------- |
-| Frontend                | React.js                         |
-| Build Tool              | Vite                             |
-| Routing                 | React Router                     |
-| Styling                 | CSS, Tailwind CSS                |
-| Charts                  | Recharts                         |
-| Icons                   | Lucide React                     |
-| Frontend Authentication | Supabase Auth / Local Demo Auth  |
-| Backend Runtime         | Node.js                          |
-| Backend Framework       | Express.js                       |
-| Database Driver         | Official MongoDB Node.js Driver  |
-| Planned Database        | MongoDB                          |
-| Backend Security        | Helmet, CORS, Express Rate Limit |
-| Authentication          | JWT, bcrypt                      |
-| Testing                 | Node.js Test Runner              |
+**अर्थ SAATHI** is a retail management application designed to help small businesses keep their everyday shop operations organized. It brings product and stock management, customer records, billing, credit (Udhaar/Khata), payment tracking, and business analytics into one application.
 
----
+This repository contains both application modules in one project:
 
-## Project Architecture
+- **Frontend:** a React single-page application built with Vite.
+- **Backend:** a separately runnable Express REST API in the `backend/` directory.
+- **Database layer:** MongoDB repository adapters and tenant-aware persistence code built with the official MongoDB Node.js Driver.
 
-The entire application is maintained in a single GitHub repository, with separate frontend and backend modules.
+The frontend and backend live in the **same Git repository**, but run as separate development processes.
+
+## Product capabilities
+
+### Retail workspace
+
+- Product and category management.
+- Stock quantity adjustments and low-stock status.
+- Expiry-date tracking.
+- Customer records and purchase history.
+- Sales and invoice workflows, including cash and credit sales.
+- Customer Udhaar / Khata balances and payment settlements.
+- Sales, profit, inventory, product, and category analytics.
+- Business profile and configurable settings.
+- Dashboard language and theme preferences.
+
+> **Current frontend data boundary:** the retail workspace currently stores products, customers, sales, settlements, and dashboard preferences in browser Local Storage. The frontend retail data provider has not yet been switched to the backend REST API. The UI and backend API modules exist in the same repository, but this should not be interpreted as completed end-to-end frontend/API integration.
+
+### Backend API modules
+
+| Module | Base path | Purpose |
+|---|---|---|
+| Health | `/api/health` | API process health |
+| Authentication | `/api/auth` | Registration and login |
+| Products | `/api/products` | Product and stock operations |
+| Categories | `/api/categories` | Product categories |
+| Customers | `/api/customers` | Customer records and history |
+| Khata | `/api/khata` | Customer credit ledger |
+| Invoices | `/api/invoices` | Billing, invoice lifecycle, invoice payments |
+| Payments | `/api/payments` | Customer payments and allocations |
+| Transactions | `/api/transactions` | Derived transaction history |
+| Dashboard | `/api/dashboard` | Business dashboard metrics |
+| Analytics | `/api/analytics` | Sales, product, category, and inventory analytics |
+| Business | `/api/business` | Profile, settings, and reset operations |
+
+See [Backend API Reference](./backend/API_REFERENCE.md) for request/response contracts, validation rules, authentication requirements, and error codes.
+
+## Technology stack
+
+| Area | Technologies |
+|---|---|
+| Frontend | React, Vite, React Router |
+| UI and styling | CSS, Tailwind CSS, Lucide React |
+| Charts | Recharts |
+| Frontend authentication | Supabase Auth or local demo adapter |
+| Backend runtime | Node.js |
+| Backend framework | Express 5 |
+| Database driver | Official MongoDB Node.js Driver |
+| Backend authentication | JWT and bcrypt |
+| Backend security | Helmet, CORS allowlist, express-rate-limit |
+| Tests | Node.js built-in test runner |
+
+## Repository structure
 
 ```text
-neo-landing/
+retail-analytics-platform_AP_2026/
 │
-├── src/                         # React frontend
-│   ├── auth/
-│   ├── components/
-│   ├── pages/
-│   ├── retail/
-│   ├── services/
-│   ├── theme/
-│   ├── App.jsx
-│   └── main.jsx
+├── src/                         # React + Vite frontend
+│   ├── auth/                    # Frontend session provider
+│   ├── components/              # Shared UI and layout components
+│   ├── pages/                   # Authentication and dashboard pages
+│   ├── retail/                  # Retail workspace and local data logic
+│   ├── services/                # Frontend authentication services
+│   └── theme/                   # Theme provider
 │
-├── public/                      # Static frontend assets
+├── public/                      # Static assets
 │
-├── backend/                     # Node.js + Express backend
+├── backend/                     # Express REST API
 │   ├── src/
-│   │   ├── config/
+│   │   ├── config/              # DB connection, tenant provider, provisioning
 │   │   ├── controllers/
+│   │   ├── errors/
 │   │   ├── middleware/
-│   │   ├── repositories/
+│   │   ├── repositories/        # MongoDB and unavailable adapters
 │   │   ├── routes/
 │   │   ├── services/
 │   │   ├── validators/
+│   │   ├── app.js
 │   │   └── server.js
-│   │
 │   ├── test/
 │   ├── postman/
 │   ├── API_REFERENCE.md
 │   ├── DATABASE_INTEGRATION_HANDOVER.md
 │   └── package.json
 │
-├── dbms/                        # Database-related project files
+├── dbms/                        # Database/DBMS project material
 ├── AUTH_SETUP.md
 ├── .env.example
-├── package.json
-├── vite.config.js
-└── README.md
+├── package.json                 # Frontend dependencies and scripts
+└── vite.config.js
 ```
 
-### Backend Architecture
+## Architecture
 
-The backend follows a layered architecture:
+### Frontend
 
-- **Routes:** Define REST API endpoints.
-- **Controllers:** Handle HTTP requests and responses.
-- **Services:** Implement business logic.
-- **Repositories:** Handle data access operations.
-- **Middleware:** Handle authentication, security, and errors.
-- **Validators:** Validate incoming request data.
+The frontend is a React single-page application. Its main areas are authentication, shared layout/UI components, retail workspace pages, theme and language providers, and browser-local retail data handling.
 
-### Database Architecture — BYOD
+### Backend
 
-अर्थ SAATHI is designed around a Business-Owned Data (BYOD) architecture.
+The backend follows a layered Express architecture:
 
-The planned architecture separates account-level information from individual business data:
+- **Routes** register HTTP endpoints.
+- **Controllers** translate HTTP requests and responses.
+- **Services** contain validation and business workflows.
+- **Repositories** provide data-access interfaces and MongoDB implementations.
+- **Middleware** handles authentication, tenant context, security, and errors.
+- **Configuration** manages central database connection, tenant repository provisioning, and tenant database setup.
 
-- A central database will maintain account and authentication information.
-- Each business will have its own MongoDB database environment for operational records.
-- Authenticated business context will be resolved on the server.
-- Business data will remain isolated between different businesses.
+### Tenant-aware database design
 
-The database integration and tenant-specific repository wiring are currently pending.
+The backend code includes a tenant repository provider. It uses the authenticated request context, checks active membership in the central database, resolves a server-side tenant connection mapping, obtains the configured database, provisions tenant collections and indexes, and creates tenant-scoped repository instances for the request.
 
----
+The tenant provisioning module defines these operational collections:
 
-## Getting Started
+- `products`
+- `categories`
+- `customers`
+- `customerLedger`
+- `invoices`
+- `payments`
+- `businessProfiles`
+- `businessSettings`
+- `businessResetAudits`
+- `invoiceSequences`
+
+Invoice items are stored as snapshots embedded in invoice documents. Transaction history is derived from invoices, payments, and Khata ledger records rather than stored in a separate transactions collection.
+
+**Deployment and verification note:** the repository contains MongoDB connection, tenant-provider, and provisioning implementations. However, source-code presence does not prove that a live Atlas environment is configured or that production persistence has been verified. Configure the required credentials and central membership/tenant mapping records, then run live integration tests before treating the service as production-ready. Billing, payment, Khata, and reset workflows use MongoDB transactions and require a replica set or sharded cluster; a standalone MongoDB server is not sufficient.
+
+## Getting started
 
 ### Prerequisites
 
-Install the following before running the project:
+- Node.js (use a currently supported LTS release).
+- npm.
+- Git.
+- A MongoDB Atlas or other MongoDB deployment when exercising persistent backend operations.
 
-- Node.js (LTS recommended)
-- npm
-- Git
-
-### 1. Clone the Repository
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/SirTripathiJi/retail-analytics-platform_AP_2026.git
-```
-
-### 2. Open the Project
-
-```bash
 cd retail-analytics-platform_AP_2026
 ```
 
-### 3. Install Frontend Dependencies
+### 2. Install frontend dependencies
+
+Run from the repository root:
 
 ```bash
 npm install
 ```
 
-### 4. Configure Frontend Environment Variables
+### 3. Configure frontend authentication (optional)
 
-Create a `.env.local` file in the project root if you want to use Supabase authentication.
+The frontend uses Supabase Auth when both variables below are configured. Without them, it falls back to a browser-local demo authentication adapter.
+
+Create `.env.local` in the repository root:
 
 ```env
-VITE_SUPABASE_URL=https://your-project-id.supabase.co
-VITE_SUPABASE_PUBLISHABLE_KEY=your-supabase-publishable-key
+VITE_SUPABASE_URL=https://YOUR_PROJECT.supabase.co
+VITE_SUPABASE_PUBLISHABLE_KEY=YOUR_SUPABASE_PUBLISHABLE_KEY
 ```
 
-If Supabase is not configured, the frontend uses its local demo authentication adapter.
+Use only the Supabase publishable/anon key in frontend configuration. **Never put a Supabase service-role key in a `VITE_` variable.**
 
-See [AUTH_SETUP.md](./AUTH_SETUP.md) for additional information.
+In local demo mode, accounts and retail records remain in that browser. They are not shared with the backend, synchronized to another device, or backed up remotely. Password recovery is not available in local demo mode.
 
-### 5. Start the Frontend
+See [AUTH_SETUP.md](./AUTH_SETUP.md) for details about authentication modes and retail data storage.
 
-From the project root:
+### 4. Start the frontend
+
+From the repository root:
 
 ```bash
 npm run dev
 ```
 
-The Vite development server will display the local frontend URL in the terminal. The default Vite port is `5173`.
+Vite prints the local URL in the terminal (normally `http://localhost:5173`).
 
----
+## Running the backend
 
-## Running the Backend
+The backend is a separate Node.js application inside this same repository.
 
-The backend is maintained inside the same repository under the `backend/` directory.
-
-### 1. Navigate to Backend
+### 1. Install backend dependencies
 
 ```bash
 cd backend
-```
-
-### 2. Install Backend Dependencies
-
-```bash
 npm install
 ```
 
-### 3. Configure Environment Variables
+### 2. Configure backend environment
 
-Create a `.env` file inside the `backend/` directory.
-
-Use the provided example:
+Copy the example environment file:
 
 ```bash
 cp .env.example .env
 ```
 
-Configure the required values:
+The backend environment file documents these variables:
 
-```env
-PORT=3001
-NODE_ENV=development
+| Variable | Description |
+|---|---|
+| `PORT` | API port; defaults to `3001` |
+| `NODE_ENV` | Runtime environment |
+| `CENTRAL_MONGODB_URI` | Central account database connection URI |
+| `CENTRAL_MONGODB_DATABASE` | Central database name |
+| `MONGODB_SERVER_SELECTION_TIMEOUT_MS` | MongoDB server selection timeout |
+| `TENANT_DB_CACHE_LIMIT` | Maximum cached tenant database entries |
+| `TENANT_DB_IDLE_TIMEOUT_MS` | Idle tenant connection eviction interval |
+| `TENANT_MONGODB_URI__DEV` | Optional URI referenced by a server-side tenant secret reference |
+| `JWT_SECRET` | Secret used to sign and verify backend JWTs |
+| `JWT_EXPIRES_IN` | JWT expiry; defaults to `1h` |
+| `CORS_ORIGIN` | Comma-separated list of allowed frontend origins |
+| `BUSINESS_TIME_ZONE` | Global analytics timezone fallback; defaults to `UTC` |
 
-CENTRAL_MONGODB_URI=
-CENTRAL_MONGODB_DATABASE=
+Set a strong `JWT_SECRET` and configure MongoDB values through your local environment or deployment secret manager. Do not commit `.env`, database URIs, passwords, signing secrets, or customer data.
 
-JWT_SECRET=your-secure-secret
-JWT_EXPIRES_IN=1h
+The tenant provider resolves membership and tenant connection metadata from the central database. Tenant mappings refer to a server-side secret reference and database name; never accept a MongoDB URI or tenant database selector from a browser request.
 
-CORS_ORIGIN=http://localhost:5173,http://localhost:4173
-
-BUSINESS_TIME_ZONE=UTC
-```
-
-**Important:** MongoDB integration is not yet configured. Keep database settings empty until the database integration is completed. A secure JWT secret must be configured before enabling token issuance and verification.
-
-### 4. Start the Backend Server
+### 3. Start the backend
 
 ```bash
 npm run dev
 ```
 
-The Express server starts on port `3001` by default.
+The API listens on port `3001` by default. For a production-style process, use:
 
-### 5. Check Backend Health
+```bash
+npm start
+```
 
-Open:
+### 4. Health endpoint
+
+With the backend running, open:
 
 ```text
 http://localhost:3001/api/health
 ```
 
-The health endpoint currently reports whether the API is running and whether a database connection has been configured.
+The health endpoint reports API process status. A successful health response alone does **not** prove that the central database, tenant mappings, or all business operations are ready.
 
----
+## Running both applications
 
-## API Documentation
+Open two terminal windows from the repository root.
 
-The backend provides REST API endpoints for the following modules:
-
-| Module                      | API Base Path       |
-| --------------------------- | ------------------- |
-| Health                      | `/api/health`       |
-| Authentication              | `/api/auth`         |
-| Products                    | `/api/products`     |
-| Categories                  | `/api/categories`   |
-| Customers                   | `/api/customers`    |
-| Khata                       | `/api/khata`        |
-| Invoices                    | `/api/invoices`     |
-| Payments                    | `/api/payments`     |
-| Transactions                | `/api/transactions` |
-| Dashboard                   | `/api/dashboard`    |
-| Analytics                   | `/api/analytics`    |
-| Business Profile & Settings | `/api/business`     |
-
-For complete endpoint details, request bodies, response formats, and error codes, refer to:
-
-- [Backend API Reference](./backend/API_REFERENCE.md)
-- [Database Integration Handover](./backend/DATABASE_INTEGRATION_HANDOVER.md)
-- [Postman Collection](./backend/postman/arth-saathi-api.postman_collection.json)
-
-**Note:** Database-dependent production API operations return `503 Service Unavailable` until the MongoDB persistence and tenant-specific repository integration is completed. The health endpoint can still respond successfully without a database connection.
-
----
-
-## Testing
-
-### Frontend Tests
-
-From the project root:
+**Terminal 1 — Frontend**
 
 ```bash
-npm test
+npm run dev
 ```
 
-### Backend Tests
-
-Navigate to the backend directory:
+**Terminal 2 — Backend**
 
 ```bash
 cd backend
+npm run dev
+```
+
+The applications are part of one repository but run as separate processes: Vite serves the frontend, and Express serves the API.
+
+## Tests and build
+
+### Frontend
+
+Run from the repository root:
+
+```bash
+npm test
+npm run build
+```
+
+### Backend
+
+Run from the `backend/` directory:
+
+```bash
 npm test
 ```
 
-The backend test suite uses Node.js's built-in test runner and test-only in-memory repositories.
+The backend tests use Node's built-in test runner and include test fixtures/in-memory repositories for isolated logic tests. Passing unit tests does not by itself verify a live MongoDB deployment, transaction support, tenant isolation against real databases, or complete frontend-to-backend workflows.
 
-Passing automated tests validates the tested application logic. It does not establish that real MongoDB persistence or complete frontend-backend integration is working.
+## API testing and documentation
 
----
+An importable Postman collection is available at:
 
-## Current Development Status
+[Backend Postman collection](./backend/postman/arth-saathi-api.postman_collection.json)
 
-| Component                            | Status                  |
-| ------------------------------------ | ----------------------- |
-| React frontend                       | Developed               |
-| Retail dashboard and UI              | Developed               |
-| Inventory workflows                  | Implemented in frontend |
-| Customer and Khata workflows         | Implemented in frontend |
-| Billing and sales workflows          | Implemented in frontend |
-| Frontend local data storage          | Implemented             |
-| Backend REST API foundation          | Developed               |
-| Authentication and JWT logic         | Developed               |
-| Inventory and category APIs          | Developed               |
-| Customer and Khata APIs              | Developed               |
-| Billing and invoice APIs             | Developed               |
-| Payments and transaction APIs        | Developed               |
-| Dashboard and analytics APIs         | Developed               |
-| Business profile and settings APIs   | Developed               |
-| Backend security and validation      | Implemented             |
-| Backend automated tests              | Implemented             |
-| MongoDB runtime connection           | Pending                 |
-| Tenant-specific database integration | Pending                 |
-| Frontend-to-backend API integration  | Pending                 |
-| End-to-end testing                   | Pending                 |
+Related documentation:
 
-### Current Implementation Notes
+- [Backend API Reference](./backend/API_REFERENCE.md)
+- [Database Integration Handover](./backend/DATABASE_INTEGRATION_HANDOVER.md)
+- [Backend-specific README](./backend/README.md)
+- [Frontend Authentication and Storage Notes](./AUTH_SETUP.md)
 
-- The frontend currently uses browser Local Storage for retail data.
-- Supabase authentication is optional; local demo authentication is available when Supabase is not configured.
-- The backend is a separately runnable Express application inside the same repository.
-- The backend has not yet been connected to the frontend.
-- MongoDB connection configuration and tenant-specific repository selection are pending.
-- The backend's automated tests use test-only in-memory repositories; these are not used by the running production application.
+## Current integration boundaries
 
----
+The repository contains substantial frontend and backend implementations. Keep these boundaries in mind during demos and deployment:
 
-## Future Scope
+1. **Retail data:** the frontend retail provider currently persists products, customers, sales, settlements, and dashboard ordering in browser Local Storage. It is not yet using the backend REST API as its retail persistence layer.
+2. **Authentication:** the frontend uses Supabase Auth when configured, or a local demo adapter otherwise. The backend has separate email/password, bcrypt, and JWT authentication endpoints. A verified bridge between the frontend session and backend JWT must be completed before the two identity flows can be treated as one production authentication system.
+3. **MongoDB runtime:** the backend contains central connection, tenant mapping, tenant database provisioning, and request-scoped repository-provider code. These require valid environment configuration, central membership and tenant mapping records, and live deployment verification.
+4. **Transactions:** billing, payments, Khata, and reset workflows require MongoDB transaction support from a replica set or sharded cluster.
+5. **Health vs readiness:** API health indicates that the Express process is running; verify database readiness and core business workflows separately.
 
-The next development stage focuses on completing the integration of the existing modules:
+## Security notes
 
-1. Configure the central MongoDB account database.
-2. Implement business-specific MongoDB connection management.
-3. Wire tenant-specific repositories into authenticated backend requests.
-4. Connect the React frontend with backend REST APIs.
-5. Replace frontend-only retail persistence with backend-backed data.
-6. Perform frontend, backend, and database integration testing.
-7. Complete end-to-end testing and deployment.
+- Never commit `.env` files or secrets.
+- Never expose MongoDB connection strings to the frontend.
+- Never trust a client-provided `businessId`, database name, or MongoDB URI to select a tenant.
+- Keep tenant selection tied to verified authentication and active central membership.
+- Configure explicit CORS origins for deployment; do not use wildcard origins.
+- Use TLS, least-privilege database credentials, secret rotation, backups, and safe log redaction in deployed environments.
+
+## Project information
+
+**Project:** अर्थ SAATHI — Retail Analytics & Management Platform  
+**Academic year:** 2026  
+**Repository:** [SirTripathiJi/retail-analytics-platform_AP_2026](https://github.com/SirTripathiJi/retail-analytics-platform_AP_2026)
 
 ---
 
-## Academic Project Information
-
-**Project Name:** अर्थ SAATHI — Retail Analytics & Management Platform
-
-**Academic Year:** 2026
-
-**Repository:** [retail-analytics-platform_AP_2026](https://github.com/SirTripathiJi/retail-analytics-platform_AP_2026)
-
-**Project Objective:** To develop a practical retail management platform that simplifies everyday shop operations and provides better visibility into inventory, sales, customers, and payments.
-
----
-
-\<p align="center">
-&#x20; \*\*अर्थ SAATHI\*\*
-
-Apne Business Ka Apna Saathi.
-
+**अर्थ SAATHI**  
+*Apne Business Ka Apna Saathi.*  
 Simplifying Retail. Empowering Businesses.
-
-\</p>
