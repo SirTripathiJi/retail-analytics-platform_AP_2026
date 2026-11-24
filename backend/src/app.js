@@ -47,6 +47,7 @@ function createApp({
   jwtExpiresIn = process.env.JWT_EXPIRES_IN || '1h',
 } = {}) {
   const app = express();
+  app.set('trust proxy', process.env.NODE_ENV === 'production' ? 1 : false);
   if (tenantRepositoryProvider) {
     inventoryProductRepository = createTenantRepositoryProxy('product');
     inventoryCategoryRepository = createTenantRepositoryProxy('category');
