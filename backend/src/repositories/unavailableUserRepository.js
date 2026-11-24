@@ -11,4 +11,5 @@ module.exports = {
   createUser: unavailable,
   findByEmail: unavailable,
   findById: unavailable,
+  findMembershipsByUserId: unavailable,
 };
