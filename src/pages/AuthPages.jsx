@@ -9,7 +9,7 @@ import { Label } from '../components/ui/label.jsx'
 import { Separator } from '../components/ui/separator.jsx'
 import { Alert } from '../components/ui/alert.jsx'
 import { ThemeToggle } from '../components/ThemeToggle.jsx'
-import { AuthNotConfiguredError, isDemoAuth, requestPasswordReset, signIn, signUp, updatePassword } from '../services/authService.js'
+import { AuthNotConfiguredError, requestPasswordReset, signIn, signUp, updatePassword } from '../services/authService.js'
 import { useAuth } from '../auth/AuthProvider.jsx'
 import { ArthSaathiIllustration, ArthSaathiMark } from '../components/illustrations/ArthSaathiIllustration.jsx'
 
@@ -68,7 +68,6 @@ function passwordStrength(password) {
 export function SignUpPage() {
   const navigate = useNavigate()
   const { refreshSession } = useAuth()
-  const demoAuth = isDemoAuth()
   const [values, setValues] = useState({ fullName: '', storeName: '', email: '', password: '', confirmPassword: '', acceptedTerms: false })
   const [errors, setErrors] = useState({})
   const [message, setMessage] = useState('')
@@ -93,14 +92,13 @@ export function SignUpPage() {
     if (!values.fullName.trim()) return setErrors({ fullName: 'Enter your name.' })
     if (!values.storeName.trim()) return setErrors({ storeName: 'Enter your shop name.' })
     if (!emailPattern.test(values.email.trim())) return setErrors({ email: 'Enter a valid email address.' })
-    if (values.password.length < 8) return setErrors({ password: 'Use at least 8 characters.' })
+    if (values.password.length < 8 || !/[A-Za-z]/.test(values.password) || !/[0-9]/.test(values.password)) return setErrors({ password: 'Use at least 8 characters, including a letter and a number.' })
     if (values.password !== values.confirmPassword) return setErrors({ confirmPassword: 'Passwords do not match.' })
     if (!values.acceptedTerms) return setErrors({ terms: 'Please accept the Terms of Service and Privacy Policy.' })
     setSubmitting(true)
     try {
       const result = await signUp({ fullName: values.fullName.trim(), storeName: values.storeName.trim(), email: values.email.trim(), password: values.password })
       if (result.session) { await refreshSession(); navigate('/dashboard', { replace: true }) }
-      else { setMessage('Your account request was received. Check your email to confirm the account before logging in.'); setMessageType('default') }
     } catch (failure) {
       const text = failure instanceof AuthNotConfiguredError ? failure.message : /already registered|already exists/i.test(failure?.message || '') ? 'An account already exists for this email. Log in instead.' : errorMessage(failure, 'We could not create your account. Please try again.')
       setMessage(text); setMessageType('destructive')
@@ -109,7 +107,7 @@ export function SignUpPage() {
 
   return <AuthLayout title="Create your account" description="Get started with a workspace built to help you work smarter." footer={<>Already have an account? <Link to="/login">Log in</Link></>}>
     <form className="auth-form" onSubmit={submit} noValidate>
-      {demoAuth && <Alert className="auth-message">Local demo mode: accounts stay on this device and are not production-secure. Configure Supabase Auth for hosted authentication.</Alert>}
+      <Alert className="auth-message">Your account and shop data are saved through the ArthSaathi backend.</Alert>
       <div className="auth-field"><Label htmlFor="fullName">Full name</Label><Input id="fullName" name="name" value={values.fullName} onChange={e => update('fullName', e.target.value)} autoComplete="name" aria-invalid={Boolean(errors.fullName)} aria-describedby={errors.fullName ? 'fullName-error' : undefined} placeholder="Your name" />{errors.fullName && <p className="auth-field-error" id="fullName-error">{errors.fullName}</p>}</div>
       <div className="auth-field"><Label htmlFor="storeName">Shop name</Label><Input id="storeName" name="storeName" value={values.storeName} onChange={e => update('storeName', e.target.value)} autoComplete="organization" aria-invalid={Boolean(errors.storeName)} aria-describedby={errors.storeName ? 'storeName-error' : undefined} placeholder="Your shop name" />{errors.storeName && <p className="auth-field-error" id="storeName-error">{errors.storeName}</p>}</div>
       <EmailField value={values.email} onChange={e => update('email', e.target.value)} error={errors.email} />
@@ -126,7 +124,6 @@ export function SignUpPage() {
 export function LoginPage() {
   const navigate = useNavigate()
   const { refreshSession } = useAuth()
-  const demoAuth = isDemoAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [errors, setErrors] = useState({})
@@ -149,7 +146,7 @@ export function LoginPage() {
   }
   return <AuthLayout title="Welcome back" description="Log in to continue where you left off." footer={<>Don't have an account? <Link to="/signup">Sign up</Link></>}>
     <form className="auth-form" onSubmit={submit} noValidate>
-      {demoAuth && <Alert className="auth-message">Local demo mode: accounts stay on this device and are not production-secure. Configure Supabase Auth for hosted authentication.</Alert>}
+      <Alert className="auth-message">Sign in connects to the ArthSaathi backend.</Alert>
       <EmailField value={email} onChange={e => { setEmail(e.target.value); setErrors(current => ({ ...current, email: '' })); setMessage('') }} error={errors.email} />
       <PasswordField id="loginPassword" label="Password" value={password} onChange={e => { setPassword(e.target.value); setErrors(current => ({ ...current, password: '' })); setMessage('') }} error={errors.password} autoComplete="current-password" />
       <div className="auth-login-options"><label className="auth-remember"><Checkbox checked={rememberMe} onChange={e => setRememberMe(e.target.checked)} /><span>Remember me</span></label><Link to="/forgot-password">Forgot password?</Link></div>
