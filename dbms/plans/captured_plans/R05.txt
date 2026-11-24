@@ -1,0 +1,7 @@
+PLAN FILE: R05
+ORIGINAL QUERY: Q9
+DESCRIPTION: Get business settings
+STATUS: NOT CAPTURED
+
+This is an intentional placeholder, not a PostgreSQL execution plan.
+Run ../capture_plans.sql from the plans/ directory to replace it with three real EXPLAIN ANALYZE runs.

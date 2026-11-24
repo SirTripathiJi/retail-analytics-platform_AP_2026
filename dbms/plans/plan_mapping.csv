@@ -1,0 +1,47 @@
+Plan file,Original query,Type,Description,Database scope,Expected captures
+R01.txt,Q2,READ,Find a user by email during login,Combined benchmark DB (central + tenant reference tables),3
+R02.txt,Q5,READ,"List businesses owned by a user, including owner details",Combined benchmark DB (central + tenant reference tables),3
+R03.txt,Q6,READ,Resolve tenant metadata for an authenticated business,Combined benchmark DB (central + tenant reference tables),3
+R04.txt,Q7,READ,Get the business profile,Combined benchmark DB (central + tenant reference tables),3
+R05.txt,Q9,READ,Get business settings,Combined benchmark DB (central + tenant reference tables),3
+R06.txt,Q12,READ,List all categories,Combined benchmark DB (central + tenant reference tables),3
+R07.txt,Q14,READ,List active products with their category names,Combined benchmark DB (central + tenant reference tables),3
+R08.txt,Q16,READ,Find products at or below their configured low-stock threshold,Combined benchmark DB (central + tenant reference tables),3
+R09.txt,Q17,READ,Find products expiring within the next 30 days,Combined benchmark DB (central + tenant reference tables),3
+R10.txt,Q18,READ,Find expired products,Combined benchmark DB (central + tenant reference tables),3
+R11.txt,Q19,READ,Calculate inventory valuation by category at cost price,Combined benchmark DB (central + tenant reference tables),3
+R12.txt,Q21,READ,Search customers by name or phone,Combined benchmark DB (central + tenant reference tables),3
+R13.txt,Q22,READ,View a customer invoice history with customer details,Combined benchmark DB (central + tenant reference tables),3
+R14.txt,Q23,READ,View a customer Khata ledger with customer details,Combined benchmark DB (central + tenant reference tables),3
+R15.txt,Q24,READ,Calculate a customer outstanding Khata balance,Combined benchmark DB (central + tenant reference tables),3
+R16.txt,Q25,READ,List customers with a positive outstanding balance,Combined benchmark DB (central + tenant reference tables),3
+R17.txt,Q28,READ,"Get invoice details, customer details, and invoice line items",Combined benchmark DB (central + tenant reference tables),3
+R18.txt,Q29,READ,List invoices for a date range with customer details,Combined benchmark DB (central + tenant reference tables),3
+R19.txt,Q30,READ,Calculate remaining amount due on each invoice,Combined benchmark DB (central + tenant reference tables),3
+R20.txt,Q35,READ,View payment history for a customer with customer details,Combined benchmark DB (central + tenant reference tables),3
+R21.txt,Q36,READ,View transaction history by combining invoices and payments,Combined benchmark DB (central + tenant reference tables),3
+R22.txt,Q37,READ,"Calculate today sales total, excluding cancelled invoices",Combined benchmark DB (central + tenant reference tables),3
+R23.txt,Q38,READ,Calculate sales grouped by day for a selected period,Combined benchmark DB (central + tenant reference tables),3
+R24.txt,Q39,READ,Calculate sales by product for a selected period,Combined benchmark DB (central + tenant reference tables),3
+R25.txt,Q40,READ,Calculate sales by category for a selected period,Combined benchmark DB (central + tenant reference tables),3
+R26.txt,Q41,READ,Estimate gross profit using current product cost price,Combined benchmark DB (central + tenant reference tables),3
+R27.txt,Q42,READ,"Find best-selling items by units, including custom invoice items",Combined benchmark DB (central + tenant reference tables),3
+R28.txt,Q43,READ,"Find least-selling active products, including zero-sales products",Combined benchmark DB (central + tenant reference tables),3
+R29.txt,Q44,READ,Preview record counts before a business data reset,Combined benchmark DB (central + tenant reference tables),3
+R30.txt,Q46,READ,Review recent reset audit events,Combined benchmark DB (central + tenant reference tables),3
+W01.txt,Q1,WRITE,Register a user,Combined benchmark DB (central + tenant reference tables),3
+W02.txt,Q3,WRITE,Create a business account for a user,Combined benchmark DB (central + tenant reference tables),3
+W03.txt,Q4,WRITE,Save tenant database connection metadata,Combined benchmark DB (central + tenant reference tables),3
+W04.txt,Q8,WRITE,Update the business profile,Combined benchmark DB (central + tenant reference tables),3
+W05.txt,Q10,WRITE,Update business settings,Combined benchmark DB (central + tenant reference tables),3
+W06.txt,Q11,WRITE,Add a category,Combined benchmark DB (central + tenant reference tables),3
+W07.txt,Q13,WRITE,Add a product,Combined benchmark DB (central + tenant reference tables),3
+W08.txt,Q15,WRITE,Update product details and stock,Combined benchmark DB (central + tenant reference tables),3
+W09.txt,Q20,WRITE,Add a customer,Combined benchmark DB (central + tenant reference tables),3
+W10.txt,Q26,WRITE,Create an invoice header,Combined benchmark DB (central + tenant reference tables),3
+W11.txt,Q27,WRITE,Add a line item to an invoice,Combined benchmark DB (central + tenant reference tables),3
+W12.txt,Q31,WRITE,Cancel an eligible invoice (status update only),Combined benchmark DB (central + tenant reference tables),3
+W13.txt,Q32,WRITE,Record a payment for an existing customer,Combined benchmark DB (central + tenant reference tables),3
+W14.txt,Q33,WRITE,Allocate a payment to a matching outstanding credit invoice,Combined benchmark DB (central + tenant reference tables),3
+W15.txt,Q34,WRITE,Recalculate an invoice paid amount and status after allocations,Combined benchmark DB (central + tenant reference tables),3
+W16.txt,Q45,WRITE,Record a reset audit event after a successful reset,Combined benchmark DB (central + tenant reference tables),3

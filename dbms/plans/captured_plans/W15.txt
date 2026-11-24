@@ -1,0 +1,7 @@
+PLAN FILE: W15
+ORIGINAL QUERY: Q34
+DESCRIPTION: Recalculate an invoice paid amount and status after allocations
+STATUS: NOT CAPTURED
+
+This is an intentional placeholder, not a PostgreSQL execution plan.
+Run ../capture_plans.sql from the plans/ directory to replace it with three real EXPLAIN ANALYZE runs.

@@ -1,0 +1,7 @@
+PLAN FILE: R20
+ORIGINAL QUERY: Q35
+DESCRIPTION: View payment history for a customer with customer details
+STATUS: NOT CAPTURED
+
+This is an intentional placeholder, not a PostgreSQL execution plan.
+Run ../capture_plans.sql from the plans/ directory to replace it with three real EXPLAIN ANALYZE runs.

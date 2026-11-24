@@ -1,0 +1,7 @@
+PLAN FILE: R16
+ORIGINAL QUERY: Q25
+DESCRIPTION: List customers with a positive outstanding balance
+STATUS: NOT CAPTURED
+
+This is an intentional placeholder, not a PostgreSQL execution plan.
+Run ../capture_plans.sql from the plans/ directory to replace it with three real EXPLAIN ANALYZE runs.

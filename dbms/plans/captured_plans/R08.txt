@@ -1,0 +1,7 @@
+PLAN FILE: R08
+ORIGINAL QUERY: Q16
+DESCRIPTION: Find products at or below their configured low-stock threshold
+STATUS: NOT CAPTURED
+
+This is an intentional placeholder, not a PostgreSQL execution plan.
+Run ../capture_plans.sql from the plans/ directory to replace it with three real EXPLAIN ANALYZE runs.

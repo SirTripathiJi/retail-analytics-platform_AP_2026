@@ -1,0 +1,7 @@
+PLAN FILE: R28
+ORIGINAL QUERY: Q43
+DESCRIPTION: Find least-selling active products, including zero-sales products
+STATUS: NOT CAPTURED
+
+This is an intentional placeholder, not a PostgreSQL execution plan.
+Run ../capture_plans.sql from the plans/ directory to replace it with three real EXPLAIN ANALYZE runs.

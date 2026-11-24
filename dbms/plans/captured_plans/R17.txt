@@ -1,0 +1,7 @@
+PLAN FILE: R17
+ORIGINAL QUERY: Q28
+DESCRIPTION: Get invoice details, customer details, and invoice line items
+STATUS: NOT CAPTURED
+
+This is an intentional placeholder, not a PostgreSQL execution plan.
+Run ../capture_plans.sql from the plans/ directory to replace it with three real EXPLAIN ANALYZE runs.

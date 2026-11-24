@@ -1,0 +1,7 @@
+PLAN FILE: R09
+ORIGINAL QUERY: Q17
+DESCRIPTION: Find products expiring within the next 30 days
+STATUS: NOT CAPTURED
+
+This is an intentional placeholder, not a PostgreSQL execution plan.
+Run ../capture_plans.sql from the plans/ directory to replace it with three real EXPLAIN ANALYZE runs.

@@ -1,0 +1,7 @@
+PLAN FILE: R23
+ORIGINAL QUERY: Q38
+DESCRIPTION: Calculate sales grouped by day for a selected period
+STATUS: NOT CAPTURED
+
+This is an intentional placeholder, not a PostgreSQL execution plan.
+Run ../capture_plans.sql from the plans/ directory to replace it with three real EXPLAIN ANALYZE runs.

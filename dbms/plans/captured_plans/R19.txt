@@ -1,0 +1,7 @@
+PLAN FILE: R19
+ORIGINAL QUERY: Q30
+DESCRIPTION: Calculate remaining amount due on each invoice
+STATUS: NOT CAPTURED
+
+This is an intentional placeholder, not a PostgreSQL execution plan.
+Run ../capture_plans.sql from the plans/ directory to replace it with three real EXPLAIN ANALYZE runs.

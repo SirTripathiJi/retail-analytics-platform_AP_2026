@@ -1,0 +1,7 @@
+PLAN FILE: W09
+ORIGINAL QUERY: Q20
+DESCRIPTION: Add a customer
+STATUS: NOT CAPTURED
+
+This is an intentional placeholder, not a PostgreSQL execution plan.
+Run ../capture_plans.sql from the plans/ directory to replace it with three real EXPLAIN ANALYZE runs.
