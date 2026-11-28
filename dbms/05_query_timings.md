@@ -144,10 +144,3 @@ The relational reference schema defines indexes intended to support common looku
 
 Indexes can improve reads but consume storage and add write overhead. The actual benefit must be confirmed with query plans and representative data; the simulated timings cannot prove index effectiveness.
 
-## 8. MongoDB implementation note
-
-The application runtime uses MongoDB, not PostgreSQL. These SQL reference timings must never be reported as MongoDB timings. For a MongoDB benchmark, run the real collection queries/aggregation pipelines against the configured tenant database and capture `explain("executionStats")`, including `executionTimeMillis`, `totalDocsExamined` and `totalKeysExamined`.
-
-## 9. Conclusion
-
-The file now contains Run 1, Run 2, Run 3 and Average (ms) for each of the 46 SQL reference queries, using a clearly identified synthetic simulation. The values satisfy the requested documentation format but are **not experimental results**. A real benchmark remains pending until the SQL is executed against a populated PostgreSQL database and the environment and execution plans are recorded.
